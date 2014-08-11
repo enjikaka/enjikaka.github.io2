@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Jeremy Karlsson - Jeremy Karlsson]]></title><description><![CDATA[En blogg om lite allt möjligt.]]></description><link>http://blog.enji.se/</link><generator>Ghost 0.5</generator><lastBuildDate>Mon, 11 Aug 2014 17:37:42 GMT</lastBuildDate><atom:link href="http://blog.enji.se/author/jeremy-karlsson/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[From woodcut to vector graphics]]></title><description><![CDATA[<p>A while ago I started digitizing a book by Olaus Magnus from 1555 - <a href='http://nordiskafolken.se/' >History of the Northern Peoples</a>. This book explains in great detail how the people in Scandinavia lived and what they believed in. In between stories of rats taking over entire cities in Europe and descriptions of great serpents in the Norwegian seas, you find recipes of mead and get to know that elks drank beer.</p>
+
+<p>We all know that reading books without images is really boring. Luckily, this book has illustrations here and there for you to enjoy and ponder about. These illustrations are nicely crafted woodcuts.</p>
+
+<p>As I wanted my digitalization of this old book to work great on all screen sizes; I decided to make the images SVG and the website responsive. Serving a file at approximately 150 kB for each post might be a bit overkill; a solution with rendered bitmaps for different sizes would be a better solution - and might be the way I go about doing it in the future. But for now, I'll go with SVG. Here's the story of how I created an SVG for the web from a woodcut in a really old book.</p>
+
+<h3 id="frompapertofile">From paper to file</h3>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/IMG_1306-WEB-1.jpg'  alt="Original image from phone." /></p>
+
+<p>I started out by taking an image of the woodcut image with my iPhone. After making sure the lighting was not too bad I snapped a picture and then it was time for some magic in Photoshop.</p>
+
+<h4 id="editingtheimageinphotoshop">Editing the image in Photoshop</h4>
+
+<p>I started out by cropping the image. Removing the bloated content around the actual woodcut. I also decided to remove the decoration around the woodcut since it doesn't really fit that nice on a website - and it takes up extra space. The borders are going away as well.</p>
+
+<h5 id="croppingtheimage">Cropping the image</h5>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/rmkee.jpg'  alt="Cropping the image in Photoshop." /></p>
+
+<p>After removing content around the woodcut I made sure to straighten the border lines to get a more correct representation of the original woodcut. I did this by transforming and warping the image.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/y4b5c.jpg'  alt="Straightening the lines in Photoshop." /></p>
+
+<p>The border around the woodcut itself is going to be removed too. It will be added later with CSS on the page. Below is the image after cropping and transforming.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/7ux9r-1.jpg'  alt="Finished cropping and transforming in Photoshop." /></p>
+
+<p>After cropping I decreased the size of the image to a width of 800 pixels. The resolution you choose will have an impact of the quality and size of the final SVG file.</p>
+
+<h5 id="increasingdetail">Increasing detail</h5>
+
+<p>For best compatibility and smallest size, the final vector image has to have black paths and transparent background. Later, a tool will trace the paths in the bitmap based on what's black and white. So the first thing I did after cropping was to increase the contrast of the image to get clear differences of blacks and whites.</p>
+
+<p>First of I did <em>CTRL + SHIFT + U</em> to desaturate the image - loosing some of the yellowish colour of the paper and the lightning. The I created a new layer and added a <em>High Pass</em> filter.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/ccgm9.jpg'  alt="Adding a High Pass filter to the layer." /></p>
+
+<p>Then I made sure to get a faint glow around the the blacks before hitting "OK".</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/73duc.jpg'  alt="Configuring the High Pass filter in Photoshop." /></p>
+
+<p>Then I set the <em>Blend Mode</em> of the Layer to <em>"Overlay"</em>. This overlays the the image above to original creating slightly more detail around the black lines.</p>
+
+<p>Next up; more contrast. Under <em>Image > Adjustments</em> you'll find <em>"Brightness/Contrast"</em>. I tweaked this until I was quite happy with the result - creating some more difference between the black and whites.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/6buex.jpg'  alt="Brightness and contrast in Photoshop." /></p>
+
+<h5 id="exportingtheimage">Exporting the image</h5>
+
+<p>The tool which traces the lines and creates the vector image wants a can handle the following bitmap formats: PBM, PGM, PPM (also known as PNM) and BMP.</p>
+
+<p>We will not go ahead and save the image in any of these formats yet though. First we'll export a PNG file using <em>"Save for Web..."</em>.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/atdrf.jpg'  alt="Saving the image in Photoshop." /></p>
+
+<p>I'm using PNG-8 with 2 colors to get only black and white colors in the exported image.</p>
+
+<h3 id="fromrastertovector">From raster to vector</h3>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/Woodcut---kopia.png'  alt="The exported raster image from Photoshop." /></p>
+
+<p>This is what the exported raster image from Photoshop looks like. It has some rough edges but it will be fixed when the image is ran through the tool which will convert the image to vector.</p>
+
+<h4 id="potrace">Potrace</h4>
+
+<p><a href='http://potrace.sourceforge.net/' >Potrace</a> is made by Peter Selinger and <em>"is a tool for tracing a bitmap, which means, transforming a bitmap into a smooth, scalable image."</em>.</p>
+
+<p>As mentioned earlier. Potrace can handle PBM, PGM, PPM and BMP files. <strong>Mkbitmap</strong> is a tool bundled with Potrace which pre-processes the input to get better tracing behaviour.</p>
+
+<h5 id="preprocessingtheinput">Preprocessing the input</h5>
+
+<p>I'll open my exported PNG in Photoshop to export it as a BMP file.</p>
+
+<p>Then I simply drag and drop that BMP file on the <em>mkbitmap.exe</em> file. This will convert the image into a PBM file, ready to be run through Potrace.</p>
+
+<h5 id="processingtheimage">Processing the image</h5>
+
+<p>Potrace is the magic tool which converts the bitmap into a vector. There are plenty options to choose from, but I'll focus on exporting a SVG file.</p>
+
+<p>I created my own CMD file with the following contents:</p>
+
+<pre><code>potrace.exe %1 -s --flat --tight
+pause
+</code></pre>
+
+<ul>
+<li><em>--flat</em> makes the whole image as a single path.</li>
+<li><em>--tight</em> removes whitespace around the input image.</li>
+<li><em>-s</em> tells Potrace to make export SVG.</li>
+<li><em>%1</em> tells the command line to use the file dropped on the CMD file.</li>
+</ul>
+
+<p>This little CMD file will generate a SVG file when you drop a file on it.</p>
+
+<p>Potrace generated the following SVG: <br />
+<img src='http://blog.enji.se/content/images/2014/Aug/Woodcut-1.svg'  alt="The generated SVG" /></p>
+
+<p>I like removing the <em>width</em> and <em>height</em> attributes from the svg element. Since there is a <em>viewBox</em> attribute present, the image proportions are kept and scaling is done nicely when you resize the SVG in the browser.</p>
+
+<p>Potrace also has some other great options. You can control the algorithm options and change curves and so on.</p>
+
+<h4 id="optimizingthesvg">Optimizing the SVG</h4>
+
+<p>There are plenty of tools to optimize the SVG file when it's done. I use <a href='https://github.com/RazrFalcon/SVGCleaner' >SVG Cleaner</a>.</p>
+
+<p>After removing the <em>width</em> and <em>height</em> attributes from the svg element in the file and optimizing the file with SVG Cleaner, I am left with 359 kB sized SVG file.</p>
+
+<p><img src='http://blog.enji.se/content/images/2014/Aug/Woodcut-cleaned.svg'  alt="The final SVG image." /></p>
+
+<h3 id="tosumitup">To sum it up</h3>
+
+<p>By using Potrace you can, without too much work, create a vector image from a photo of a woodcut. Depending on how much time you spend tweaking and playing around with both Photoshop and Potrace, you'll get very varying results and probably end up with a great little way of your own to do this with your very own settings and tweaks.</p>
+
+<p>I hope this post was of use to you.</p>]]></description><link>http://blog.enji.se/from-woodcut-to-vector-graphics/</link><guid isPermaLink="false">18d0afc1-38d7-4f65-b96c-476169d8ddaa</guid><dc:creator><![CDATA[Jeremy Karlsson]]></dc:creator><pubDate>Wed, 06 Aug 2014 20:30:48 GMT</pubDate></item></channel></rss>
