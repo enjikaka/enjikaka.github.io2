@@ -206,7 +206,26 @@ pause
                     <span class="hidden">Google+</span>
                 </a>
             </section>
-
+<section class="social-reach-area">
+<div class="social-reach">
+<div class="twitter">
+<strong>Tweets</strong>
+<span class="count">0</span>
+</div>
+<div class="facebook">
+<strong>Likes and shares</strong>
+<span class="count">0</span>
+</div>
+<div class="google-plus">
+<strong>+1</strong>
+<span class="count">0</span>
+</div>
+<div class="total">
+<strong>Influence</strong>
+<span class="count">0</span>
+</div>
+</div>
+</section>
         </footer>
 
     
@@ -226,6 +245,19 @@ pause
     
     <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=bedddeea86"></script>
     <script type="text/javascript" src="../assets/js/index.js?v=bedddeea86"></script>
-
+<script src="../assets/js/jsonhttprequest.min.js"></script>
+<script src="../assets/js/socialreach.min.js"></script>
+<script>
+    SocialReach.get(document.location.href, function(data) {
+        console.log(data);
+        var sr = document.querySelector('.social-reach');
+        sr.querySelector('.twitter .count').innerHTML = data.tweets;
+        sr.querySelector('.facebook .count').innerHTML = data.facebook.total;
+        sr.querySelector('.google-plus .count').innerHTML = data.plusOnes;
+        sr.querySelector('.total .count').innerHTML = data.total;
+    }, function(error) {
+        console.log(error.message);
+    });
+    </script>
 </body>
 </html>
