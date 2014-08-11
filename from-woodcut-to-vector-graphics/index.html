@@ -249,7 +249,6 @@ pause
 <script src="../assets/js/socialreach.min.js"></script>
 <script>
     SocialReach.get(document.location.href, function(data) {
-        console.log(data);
         var sr = document.querySelector('.social-reach');
         sr.querySelector('.twitter .count').innerHTML = data.tweets;
         sr.querySelector('.facebook .count').innerHTML = data.facebook.total;
